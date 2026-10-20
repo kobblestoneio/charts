@@ -1,0 +1,107 @@
+name: Release Chart
+
+# Publishes a chart when a GitHub release is published manually.
+#
+# The release tag names the chart and its version: `<chart>-<version>`, e.g. `kobblestone-0.1.0`. The version must
+# match `version` in charts/<chart>/Chart.yaml at the tagged commit. The workflow then:
+#   - attaches the packaged chart (.tgz) to the release
+#   - adds it to the Helm repo index on the gh-pages branch (https://kobblestoneio.github.io/charts)
+#   - pushes it as an OCI artifact (oci://ghcr.io/kobblestoneio/charts/<chart>)
+
+on:
+  release:
+    types:
+      - published
+
+permissions:
+  contents: write
+  packages: write
+
+concurrency:
+  group: release-charts
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event.release.tag_name }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+
+      - name: Resolve chart from tag
+        id: chart
+        run: |
+          if [[ ! "$TAG" =~ ^(.+)-v?([0-9]+\.[0-9]+\.[0-9]+.*)$ ]]; then
+            echo "::error::Release tag '$TAG' must be '<chart>-<version>', e.g. 'kobblestone-0.1.0'"
+            exit 1
+          fi
+          name="${BASH_REMATCH[1]}"
+          version="${BASH_REMATCH[2]}"
+          chart_dir="charts/$name"
+
+          if [[ ! -f "$chart_dir/Chart.yaml" ]]; then
+            echo "::error::Chart '$name' not found at $chart_dir"
+            exit 1
+          fi
+
+          chart_version="$(helm show chart "$chart_dir" | sed -n 's/^version: *//p' | tr -d '"')"
+          if [[ "$chart_version" != "$version" ]]; then
+            echo "::error::Tag version '$version' does not match $chart_dir/Chart.yaml version '$chart_version'"
+            exit 1
+          fi
+
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "dir=$chart_dir" >> "$GITHUB_OUTPUT"
+
+      - name: Check CRDs and RBAC against the operator release
+        run: CHART="${{ steps.chart.outputs.dir }}" bash hack/sync-operator.sh --check
+
+      - name: Lint and package
+        run: |
+          helm lint "${{ steps.chart.outputs.dir }}" --strict
+          helm package "${{ steps.chart.outputs.dir }}" --destination dist
+
+      - name: Attach chart to release
+        run: gh release upload "$TAG" dist/*.tgz --clobber
+
+      - name: Update Helm repo index on gh-pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if git ls-remote --exit-code --heads origin gh-pages > /dev/null; then
+            git fetch origin gh-pages
+            git worktree add gh-pages origin/gh-pages
+            git -C gh-pages checkout -B gh-pages
+          else
+            git worktree add --orphan -b gh-pages gh-pages
+          fi
+
+          merge_args=()
+          if [[ -f gh-pages/index.yaml ]]; then
+            merge_args=(--merge gh-pages/index.yaml)
+          fi
+          helm repo index dist \
+            --url "https://github.com/${{ github.repository }}/releases/download/$TAG" \
+            "${merge_args[@]}"
+          cp dist/index.yaml gh-pages/index.yaml
+
+          cd gh-pages
+          git add index.yaml
+          git commit -m "Release ${{ steps.chart.outputs.name }} ${{ steps.chart.outputs.version }}"
+          git push origin gh-pages
+
+      - name: Push chart to GHCR
+        run: |
+          echo "${{ github.token }}" | helm registry login ghcr.io --username "${{ github.actor }}" --password-stdin
+          helm push dist/*.tgz "oci://ghcr.io/${{ github.repository_owner }}/charts"

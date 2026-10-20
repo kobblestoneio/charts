@@ -1,0 +1,55 @@
+apiVersion: v2
+name: kobblestone
+description: Run Minecraft the Kubernetes way. Installs the Kobblestone operator and its custom resource definitions.
+type: application
+version: 0.1.0
+appVersion: "0.2.0"
+kubeVersion: ">=1.29.0-0"
+home: https://kobblestone.io
+icon: https://raw.githubusercontent.com/kobblestoneio/kobblestone/main/docs/assets/hero.svg
+sources:
+  - https://github.com/kobblestoneio/kobblestone
+  - https://github.com/kobblestoneio/charts
+keywords:
+  - minecraft
+  - operator
+  - gaming
+  - kobblestone
+annotations:
+  artifacthub.io/license: Apache-2.0
+  artifacthub.io/operator: "true"
+  artifacthub.io/prerelease: "true"
+  artifacthub.io/crds: |
+    - kind: Server
+      version: v1alpha1
+      description: A Minecraft server.
+    - kind: Network
+      version: v1alpha1
+      description: A Velocity proxy in front of a set of servers.
+    - kind: Router
+      version: v1alpha1
+      description: A hostname-based router (mc-router).
+    - kind: Route
+      version: v1alpha1
+      description: A hostname route of a Router.
+    - kind: BackupRepo
+      version: v1alpha1
+      description: A place to store backups (PVC or S3).
+    - kind: Backup
+      version: v1alpha1
+      description: A backup of a Server.
+    - kind: Restore
+      version: v1alpha1
+      description: Restores a Backup into a Server.
+    - kind: Command
+      version: v1alpha1
+      description: Runs an RCON command and captures the response.
+    - kind: CommandGroup
+      version: v1alpha1
+      description: A group of RCON commands.
+    - kind: Account
+      version: v1alpha1
+      description: A Minecraft account used by bots.
+    - kind: Bot
+      version: v1alpha1
+      description: A bot deployment connected to a Server or Network.

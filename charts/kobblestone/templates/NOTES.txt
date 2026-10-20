@@ -1,0 +1,28 @@
+Kobblestone {{ .Chart.AppVersion }} is installed in namespace {{ .Release.Namespace }}.
+
+Check that the operator is running:
+
+  kubectl -n {{ .Release.Namespace }} get pods -l app.kubernetes.io/instance={{ .Release.Name }}
+
+Create your first server:
+
+  cat <<EOF | kubectl apply -f -
+  apiVersion: kobblestone.io/v1alpha1
+  kind: Server
+  metadata:
+    name: my-server
+  spec:
+    eula: true
+    type: Paper
+    version: "26.2"
+    storage:
+      size: 1Gi
+  EOF
+
+Kobblestone is alpha software: resources and fields can change between releases.
+Docs: https://kobblestone.io/docs
+{{- if and .Values.crds.install .Values.crds.keep }}
+
+Note: the CRDs are kept on `helm uninstall`. Delete them manually to remove all Kobblestone resources:
+  kubectl get crd -o name | grep kobblestone.io | xargs kubectl delete
+{{- end }}

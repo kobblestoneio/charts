@@ -1,0 +1,17 @@
+{{- /*
+CRDs are rendered as regular templates (not from the crds/ directory) so that `helm upgrade` updates them too.
+The source files in files/crds/ are synced from the operator repo with hack/sync-operator.sh.
+*/ -}}
+{{- if .Values.crds.install }}
+{{- range $path, $_ := .Files.Glob "files/crds/*.yaml" }}
+{{- $crd := $.Files.Get $path | fromYaml }}
+{{- $metadata := $crd.metadata }}
+{{- $labels := merge (include "kobblestone.labels" $ | fromYaml) (default dict $metadata.labels) }}
+{{- $_ := set $metadata "labels" $labels }}
+{{- if $.Values.crds.keep }}
+{{- $_ := set $metadata "annotations" (merge (dict "helm.sh/resource-policy" "keep") (default dict $metadata.annotations)) }}
+{{- end }}
+---
+{{ toYaml $crd }}
+{{- end }}
+{{- end }}

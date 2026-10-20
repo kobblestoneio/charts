@@ -1,0 +1,88 @@
+# Default values for the Kobblestone chart.
+
+# -- Override the chart name used in resource names.
+nameOverride: ""
+# -- Override the full name of all resources.
+fullnameOverride: ""
+
+crds:
+  # -- Install and upgrade the Kobblestone CRDs with this release.
+  install: true
+  # -- Keep the CRDs (and with them all Kobblestone resources) when the release is uninstalled.
+  keep: true
+
+image:
+  repository: ghcr.io/kobblestoneio/kobblestone
+  # -- Image tag. Defaults to the chart's appVersion.
+  tag: ""
+  # -- Image digest. Takes precedence over the tag when set (e.g. sha256:...).
+  digest: ""
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+# -- Number of operator replicas. Only the elected leader reconciles; extra replicas are hot standbys.
+replicaCount: 1
+
+serviceAccount:
+  # -- Create a ServiceAccount for the operator.
+  create: true
+  # -- Name of the ServiceAccount. Generated from the full name if empty.
+  name: ""
+  annotations: {}
+  automount: true
+
+rbac:
+  # -- Create the ClusterRole and ClusterRoleBinding the operator needs.
+  create: true
+
+# -- Port the operator's HTTP server (auto-sleep webhook) listens on inside the container.
+containerPort: 8080
+
+service:
+  # -- Expose the operator's HTTP endpoints (auto-sleep webhook) inside the cluster.
+  enabled: true
+  type: ClusterIP
+  port: 80
+  annotations: {}
+
+# -- Extra environment variables for the operator container.
+extraEnv: []
+#  - name: Logging__LogLevel__Default
+#    value: Debug
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 500m
+    memory: 500Mi
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+
+livenessProbe: {}
+readinessProbe: {}
+
+# -- Extra volumes and mounts for the operator pod.
+extraVolumes: []
+extraVolumeMounts: []
+
+terminationGracePeriodSeconds: 10
+revisionHistoryLimit: 3
+priorityClassName: ""
+nodeSelector: {}
+tolerations: []
+affinity: {}
