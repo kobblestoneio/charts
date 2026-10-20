@@ -64,6 +64,10 @@ podLabels: {}
 
 podSecurityContext:
   runAsNonRoot: true
+  # runAsNonRoot needs a numeric user, but the image sets `USER kobblestone` by name. 1654 is the non-root `app` user
+  # that every .NET base image ships (APP_UID); the operator's files are world-readable, so it runs fine as that user.
+  runAsUser: 1654
+  runAsGroup: 1654
   seccompProfile:
     type: RuntimeDefault
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## kobblestone 0.1.1
+
+Operator version: `0.2.0`
+
+- Fix the operator pod failing to start with `container has runAsNonRoot and image has non-numeric user`. The pod now
+  runs as UID/GID `1654` (the `app` user of the .NET base image) by default (`podSecurityContext.runAsUser`/`runAsGroup`).
+
 ## kobblestone 0.1.0
 
 Operator version: `0.2.0`
