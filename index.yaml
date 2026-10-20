@@ -1,0 +1,64 @@
+apiVersion: v1
+entries:
+  kobblestone:
+  - annotations:
+      artifacthub.io/crds: |
+        - kind: Server
+          version: v1alpha1
+          description: A Minecraft server.
+        - kind: Network
+          version: v1alpha1
+          description: A Velocity proxy in front of a set of servers.
+        - kind: Router
+          version: v1alpha1
+          description: A hostname-based router (mc-router).
+        - kind: Route
+          version: v1alpha1
+          description: A hostname route of a Router.
+        - kind: BackupRepo
+          version: v1alpha1
+          description: A place to store backups (PVC or S3).
+        - kind: Backup
+          version: v1alpha1
+          description: A backup of a Server.
+        - kind: Restore
+          version: v1alpha1
+          description: Restores a Backup into a Server.
+        - kind: Command
+          version: v1alpha1
+          description: Runs an RCON command and captures the response.
+        - kind: CommandGroup
+          version: v1alpha1
+          description: A group of RCON commands.
+        - kind: Account
+          version: v1alpha1
+          description: A Minecraft account used by bots.
+        - kind: Bot
+          version: v1alpha1
+          description: A bot deployment connected to a Server or Network.
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/operator: "true"
+      artifacthub.io/prerelease: "true"
+    apiVersion: v2
+    appVersion: 0.2.0
+    created: "2026-10-20T19:54:56.899149996Z"
+    description: Run Minecraft the Kubernetes way. Installs the Kobblestone operator
+      and its custom resource definitions.
+    digest: 16becafced15219644f68db42309ed4bc622f1d83c839933c6aee00d99f67200
+    home: https://kobblestone.io
+    icon: https://raw.githubusercontent.com/kobblestoneio/kobblestone/main/docs/assets/hero.svg
+    keywords:
+    - minecraft
+    - operator
+    - gaming
+    - kobblestone
+    kubeVersion: '>=1.29.0-0'
+    name: kobblestone
+    sources:
+    - https://github.com/kobblestoneio/kobblestone
+    - https://github.com/kobblestoneio/charts
+    type: application
+    urls:
+    - https://github.com/kobblestoneio/charts/releases/download/kobblestone-0.1.0/kobblestone-0.1.0.tgz
+    version: 0.1.0
+generated: "2026-10-20T19:54:56.897302539Z"
