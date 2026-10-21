@@ -1,5 +1,12 @@
 # Changelog
 
+## kobblestone 0.1.2
+
+Operator version: `0.2.1`
+
+- Update the operator to [v0.2.1](https://github.com/kobblestoneio/kobblestone/blob/main/CHANGELOG/CHANGELOG-0.2.md#v021).
+- Update the `Bot` CRD: volume names starting with `kobblestone-` are now documented as reserved.
+
 ## kobblestone 0.1.1
 
 Operator version: `0.2.0`
