@@ -1,5 +1,17 @@
 # Changelog
 
+## kobblestone 0.2.0
+
+Operator version: `0.3.0`
+
+- Update the operator to [v0.3.0](https://github.com/kobblestoneio/kobblestone/blob/main/CHANGELOG/CHANGELOG-0.3.md#v030).
+  **Breaking:** the `Network` CRD changed incompatibly. A `Network` now creates and manages its servers from
+  `spec.serverTemplate` and `spec.servers`; existing `Network` resources have to be rewritten before upgrading. See the
+  operator's upgrade notes.
+- Update the `Server` CRD: new field `spec.forwarding` to accept players forwarded by a Velocity proxy.
+- Update the operator's ClusterRole: the operator now manages `ConfigMap`s (forwarding configuration of servers),
+  watches the `Deployment`s of networks and creates, updates and deletes `Server`s.
+
 ## kobblestone 0.1.2
 
 Operator version: `0.2.1`

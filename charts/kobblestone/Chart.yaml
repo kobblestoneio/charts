@@ -2,8 +2,8 @@ apiVersion: v2
 name: kobblestone
 description: Run Minecraft the Kubernetes way. Installs the Kobblestone operator and its custom resource definitions.
 type: application
-version: 0.1.2
-appVersion: "0.2.1"
+version: 0.2.0
+appVersion: "0.3.0"
 kubeVersion: ">=1.29.0-0"
 home: https://kobblestone.io
 icon: https://raw.githubusercontent.com/kobblestoneio/kobblestone/main/docs/assets/hero.svg
@@ -25,7 +25,7 @@ annotations:
       description: A Minecraft server.
     - kind: Network
       version: v1alpha1
-      description: A Velocity proxy in front of a set of servers.
+      description: A Velocity proxy and the servers it manages.
     - kind: Router
       version: v1alpha1
       description: A hostname-based router (mc-router).
