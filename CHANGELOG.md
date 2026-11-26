@@ -1,5 +1,23 @@
 # Changelog
 
+## kobblestone 0.3.0
+
+Operator version: `0.4.0`
+
+- Update the operator to [v0.4.0](https://github.com/kobblestoneio/kobblestone/blob/main/CHANGELOG/CHANGELOG-0.4.md#v040).
+  **Breaking:** Kubernetes 1.32 or newer is required (`kubeVersion: ">=1.32.0-0"`): the CRDs declare `selectableFields`.
+  `Server`s and `Network`s created with an earlier operator version have to be re-created, because their `Secret`s
+  have no owner (they report `SecretConflict`). See the operator's upgrade notes.
+- Add the `FileBrowser` CRD: file access to `Server`s, `Backup`s and `BackupRepo`s through a web interface, SFTP,
+  WebDAV and a REST API.
+- Update the CRDs: configurable resources for every container (e.g. `Server` `spec.pod.proxyResources`, `Account`
+  `spec.authorization.pod.resources`), `job.nodeSelector` and `job.ttlSecondsAfterFailure` for `Backup`s and
+  `Restore`s, `authorization.ttlSecondsAfterFailure` and `status.lastFailure` for `Account`s, and the replica counts
+  of `Router`s in `status`.
+- Update the operator's ClusterRole for `FileBrowser`s: the operator now manages `Deployment`s, `NetworkPolicy`s,
+  `HTTPRoute`s and `TCPRoute`s for them, deletes `Pod`s, reads `PersistentVolumeClaim`s and lists
+  `BackupRepo`s.
+
 ## kobblestone 0.2.0
 
 Operator version: `0.3.0`

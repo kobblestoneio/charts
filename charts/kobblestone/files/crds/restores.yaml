@@ -83,8 +83,21 @@ spec:
                       Default is `ubuntu`.
                     nullable: true
                     type: string
+                  nodeSelector:
+                    additionalProperties:
+                      type: string
+                    description: Node selector of the restore `Pod`.
+                    externalDocs:
+                      url: https://kubernetes.io/docs/reference/kubernetes-api/core/pod-v1/#PodSpec
+                    nullable: true
+                    type: object
                   resources:
-                    description: Compute resources of the restore `Pod`.
+                    description: |-
+                      Compute resources of each container of the restore `Job` (the check for existing data, the download from S3 repos, and the restore). The containers run one after another, so the `Pod` needs no more than this.
+
+                      Default is a request of `10m` CPU and `64Mi` memory, and a limit of `256Mi` memory.
+                    externalDocs:
+                      url: https://kubernetes.io/docs/reference/kubernetes-api/core/pod-v1/#resources
                     nullable: true
                     properties:
                       claims:
@@ -124,6 +137,18 @@ spec:
                       type: object
                     nullable: true
                     type: array
+                  ttlSecondsAfterFailure:
+                    description: |-
+                      How long a failed restore `Job` and its `Pod` are kept for their logs, in seconds. Successful `Job`s are deleted right away.
+
+                      At least `60`: Kubernetes applies it to successful `Job`s as well, which have to exist until the operator recorded their result.
+
+                      Default is `600` (10 minutes).
+                    exclusiveMinimum: false
+                    format: int32
+                    minimum: 60.0
+                    nullable: true
+                    type: integer
                 type: object
               path:
                 description: |-
@@ -179,6 +204,8 @@ spec:
         required:
         - spec
         type: object
+    selectableFields:
+    - jsonPath: .spec.targetRef.name
     served: true
     storage: true
     subresources:
