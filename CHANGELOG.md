@@ -1,5 +1,14 @@
 # Changelog
 
+## kobblestone 0.3.1
+
+Operator version: `0.4.1`
+
+- Update the operator to [v0.4.1](https://github.com/kobblestoneio/kobblestone/blob/main/CHANGELOG/CHANGELOG-0.4.md#v041):
+  `Command`s are sent to a server one at a time, so concurrent commands no longer get each other's output on Vanilla
+  servers, and `CommandGroup`s report name conflicts with existing `Command`s. The CRDs and the ClusterRole are
+  unchanged.
+
 ## kobblestone 0.3.0
 
 Operator version: `0.4.0`
